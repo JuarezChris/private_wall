@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<div id="wrapper">
+    <div class="nav">
+        <h1>Welcome {{session['userfname']}}</h1>
+        <h2>Coding dojo wall</h2>
+        <a href='/exit';">Log Out</a>
+    </div>
+    <div class="wall">
+        <h2>Send Messages</h2>
+        {% for one_user in all_users%}
+        {% if one_user["id"] == session["id"]%}
+            <p></p>
+        {% else %}
+            <form action="/send_message/{{one_user.id}}"" method="POST">
+                    <p>{{one_user["first_name"]}}</p>
+                    <textarea type="text" name="message"></textarea>
+                    <input type="submit" value="send">
+            </form>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="my_messages">
+        <h1>My Messages</h1>
+        {% for one_message in all_messages%}
+            {% if one_message["recieved_id"] == session["id"]%}
+                {% for user in all_users %}   
+                {% if one_message["sent_id"] == user.id%}
+                    <p>message sent by {{user.first_name}}</p>
+                {% endif %}
+                {% endfor %}
+                <p>{{one_message.messages}}</p>
+                <a href="/delete/{{one_message.message_id}}">Delete</a>
+                
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% with messages = get_flashed_messages() %}     <!-- declare a variable called messages -->
+    {% if messages %}                            <!-- check if there are any messages -->
+        {% for message in messages %}            <!-- loop through the messages -->
+            <p>{{message}}</p>                   <!-- display each message in a paragraph tag -->
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</body>
+</html>
